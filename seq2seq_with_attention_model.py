@@ -20,8 +20,9 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 SOS_token = 0
 vocab = set()
-word_to_ix = {"SOS": 0}
-idx_to_word = {}
+word_to_ix = {"<PAD>": 0, "<UNK>": 1}
+idx_to_word = {0: "<PAD>", 1: "<UNK>"}
+
 ix_to_label = {0: "Literal", 1: "Metaphor"}
 
 def get_num_lines(file_path):
@@ -405,15 +406,15 @@ def predictSentenceLabels(sentence, encoder, decoder, max_length):
 glove_embeddings = get_embedding_matrix(word_to_ix,idx_to_word)
 
 train_sentences, max_train_sentence_len = prepareVUAtrainData()
-train = [(embed_indexed_sequence(sen[0], word_to_ix, glove_embeddings),sen[1]) for sen in train_sentences]
-
 test_sentences, max_test_sentence_len = prepareVUAtestData()
-
 word_to_ix,idx_to_word = get_word2idx_idx2word(vocab)
 
 
+train = [(embed_indexed_sequence(sen[0], word_to_ix, glove_embeddings),sen[1]) for sen in train_sentences]
+
+
 max_length = max(max_train_sentence_len, max_test_sentence_len)
-hidden_size = 256
+hidden_size = 300
 vocab_size = len(word_to_ix)
 n_epochs = 1
 encoder = EncoderRNN(vocab_size, hidden_size).to(device)
