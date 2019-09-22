@@ -137,7 +137,7 @@ set up model, loss criterion, optimizer
 # dropout1: dropout on input to RNN
 # dropout2: dropout in RNN; would be used if num_layers!=1
 # dropout3: dropout on hidden state of RNN to linear layer
-RNNseq_model = RNNSequenceModel(num_classes=2, embedding_dim=300 + 1024, hidden_size=300, num_layers=1, bidir=True,
+RNNseq_model = RNNSequenceModel(num_classes=2, embedding_dim=300, hidden_size=300, num_layers=1, bidir=True,
                                 dropout1=0.5, dropout2=0, dropout3=0.1)
 # Move the model to the GPU if available
 if using_GPU:
