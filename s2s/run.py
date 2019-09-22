@@ -44,7 +44,7 @@ if __name__ == "__main__":
     # Set up an optimizer for updating the parameters of the rnn_clf
     rnn_optimizer = optim.Adam(model.parameters(), lr=0.005)
     # Number of epochs (passes through the dataset) to train the model for.
-    num_epochs = 20
+    num_epochs = 10
 
     train_loss = []
     val_loss = []

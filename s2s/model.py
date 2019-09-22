@@ -22,7 +22,6 @@ class LSTMSequence(nn.Module):
         # We set batch_first=True because our data is of shape (batch_size, seq_len, num_features)
         self.rnn = nn.LSTM(input_size=embedding_dim, hidden_size=hidden_size,
                            num_layers=num_layers, dropout=dropout2, batch_first=True, bidirectional=bidir)
-
         direc = 2 if bidir else 1
         # Set up the final transform to a distribution over classes.
         self.output_projection = nn.Linear(hidden_size * direc, num_classes)
