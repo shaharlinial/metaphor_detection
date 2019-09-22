@@ -20,8 +20,8 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 SOS_token = 0
 vocab = set()
-word_to_ix = {"<PAD>": 0, "<UNK>": 1}
-idx_to_word = {0: "<PAD>", 1: "<UNK>"}
+#word_to_ix = {"<PAD>": 0, "<UNK>": 1}
+#idx_to_word = {0: "<PAD>", 1: "<UNK>"}
 
 ix_to_label = {0: "Literal", 1: "Metaphor"}
 
@@ -116,7 +116,7 @@ def get_embedding_matrix(word2idx, idx2word, normalization=False):
 
     # Randomly initialize an embedding matrix of (vocab_size, embedding_dim) shape
     # with a similar distribution as the pretrained embeddings for words in vocab.
-    vocab_size = len(word2idx)
+    vocab_size = len(word_to_ix)
     embedding_matrix = torch.FloatTensor(vocab_size, embedding_dim).normal_(embeddings_mean, embeddings_stdev)
     # Go through the embedding matrix and replace the random vector with a
     # pretrained one if available. Start iteration at 2 since 0, 1 are PAD, UNK
@@ -136,20 +136,21 @@ def get_embedding_matrix(word2idx, idx2word, normalization=False):
 # input size is the ONE_HOT_ENCODING vector size that is passed to the Embedding layer to create a more dense encoding
 # i.e it is the vocabulary size
 class EncoderRNN(nn.Module):
-    def __init__(self, input_size, hidden_size):
+    def __init__(self, hidden_size):
         super(EncoderRNN, self).__init__()
         self.hidden_size = hidden_size
 
         # TODO: Replace the embeddings with pre-trained word embeddings such as word2vec or GloVe
-        self.embedding = nn.Embedding(input_size, hidden_size)
+        #self.embedding = nn.Embedding(input_size, hidden_size)
 
 
         self.lstm = nn.LSTM(hidden_size, hidden_size)
 
     def forward(self, input, hidden):
-        embedded = self.embedding(input).view(1, 1, -1)
-        output = embedded
-        output, hidden = self.lstm(output, hidden)
+        #embedded = self.embedding(input).view(1, 1, -1)
+        #output = embedded
+
+        output, hidden = self.lstm(input.view(1,1,-1), hidden)
         return output, hidden
 
     # (hidden_state, cell_state)
@@ -253,8 +254,8 @@ def tensorFromSentence(word_to_ix, sentence):
     return torch.tensor(indexes, dtype=torch.long, device=device).view(-1, 1)
 
 
-def tensorsFromPair(word_to_ix, pair):
-    input_tensor = tensorFromSentence(word_to_ix, pair[0])
+def tensorsFromPair( pair):
+    input_tensor = pair[0]
     target_tensor = tensorFromTags(pair[1])
     return input_tensor, target_tensor
 
@@ -330,7 +331,7 @@ def trainIters(encoder, decoder, word_to_ix, pairs, n_epochs, max_length, print_
 
     encoder_optimizer = optim.SGD(encoder.parameters(), lr=learning_rate)
     decoder_optimizer = optim.SGD(decoder.parameters(), lr=learning_rate)
-    training_pairs = [tensorsFromPair(word_to_ix, pair) for pair in pairs]
+    training_pairs = [tensorsFromPair(pair) for pair in pairs]
     criterion = nn.NLLLoss()
 
     for epoch in range(n_epochs):
@@ -374,7 +375,7 @@ def evaluate(test_sentences, encoder, attn_decoder, max_length):
 
 def predictSentenceLabels(sentence, encoder, decoder, max_length):
     with torch.no_grad():
-        input_tensor = tensorFromSentence(word_to_ix, sentence)
+        input_tensor = sentence
         input_length = input_tensor.size()[0]
         encoder_hidden = encoder.initHidden()
 
@@ -403,28 +404,28 @@ def predictSentenceLabels(sentence, encoder, decoder, max_length):
         return decoded_labels
 
 
-glove_embeddings = get_embedding_matrix(word_to_ix,idx_to_word)
 
 train_sentences, max_train_sentence_len = prepareVUAtrainData()
 test_sentences, max_test_sentence_len = prepareVUAtestData()
 word_to_ix,idx_to_word = get_word2idx_idx2word(vocab)
+glove_embeddings = get_embedding_matrix(word_to_ix,idx_to_word)
 
-
-train = [(embed_indexed_sequence(sen[0], word_to_ix, glove_embeddings),sen[1]) for sen in train_sentences]
+embedded_train = [(embed_indexed_sequence(sen[0], word_to_ix, glove_embeddings),sen[1]) for sen in train_sentences]
+embedded_test = [(embed_indexed_sequence(sen[0], word_to_ix, glove_embeddings),sen[1]) for sen in test_sentences]
 
 
 max_length = max(max_train_sentence_len, max_test_sentence_len)
 hidden_size = 300
 vocab_size = len(word_to_ix)
 n_epochs = 1
-encoder = EncoderRNN(vocab_size, hidden_size).to(device)
+encoder = EncoderRNN(hidden_size).to(device)
 
 output_feature_size = len(ix_to_label)  # 2 : we have two classes - literal/metaphor
 
 attn_decoder = AttnDecoderRNN(hidden_size, output_feature_size, max_length, dropout_p=0.1).to(device)
 
-trainIters(encoder, attn_decoder, word_to_ix, train_sentences[1:50], n_epochs, max_length, print_every=5000)
+trainIters(encoder, attn_decoder, word_to_ix, embedded_train[1:50], n_epochs, max_length, print_every=5000)
 
-evaluate(test_sentences[0:5], encoder, attn_decoder, max_length)
+evaluate(embedded_test[0:5], encoder, attn_decoder, max_length)
 
 #http://nlp.stanford.edu/data/glove.840B.300d.zip
