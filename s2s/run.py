@@ -1,5 +1,5 @@
-from s2s.util import *
-from s2s.model import LSTMSequence
+from util import *
+from model import LSTMSequence
 from torch.utils.data import DataLoader
 import torch.optim as optim
 

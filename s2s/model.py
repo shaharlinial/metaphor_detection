@@ -1,12 +1,8 @@
 import torch.nn as nn
 import torch.nn.functional as F
-from allennlp.nn.util import sort_batch_by_length, masked_softmax
+from allennlp.nn.util import sort_batch_by_length
 from torch.nn.utils.rnn import pack_padded_sequence
 from torch.nn.utils.rnn import pad_packed_sequence
-from torch.autograd import Variable
-import torch
-import numpy as np
-
 
 class LSTMSequence(nn.Module):
     # num_classes: The number of classes in the classification problem.
@@ -45,7 +41,7 @@ class LSTMSequence(nn.Module):
         # apply dropout to the input
         # Shape of inputs: (batch_size, sequence_length, embedding_dim)
         embedded_input = self.dropout_on_input_to_LSTM(inputs)
-        # Sort the embedded inputs by decreasing order of input length.
+        # Sort the embedded inputs by decreasing order of input length. [ this is done for batching ]
         # sorted_input shape: (batch_size, sequence_length, embedding_dim)
         (sorted_input, sorted_lengths, input_unsort_indices, _) = sort_batch_by_length(embedded_input, lengths)
         # Pack the sorted inputs with pack_padded_sequence.
@@ -58,7 +54,6 @@ class LSTMSequence(nn.Module):
         # Re-sort the packed sequence to restore the initial ordering
         # Shape: (batch_size, sequence_length, hidden_size)
         output = sorted_output[input_unsort_indices]
-
         # 2. run linear layer
         # apply dropout to input to the linear layer
         # (batch_size, sequence_length, hidden_size)
