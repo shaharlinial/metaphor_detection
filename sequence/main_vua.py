@@ -20,7 +20,7 @@ print("PyTorch version:")
 print(torch.__version__)
 print("GPU Detected:")
 print(torch.cuda.is_available())
-using_GPU = True
+using_GPU = False
 
 """
 1. Data pre-processing
