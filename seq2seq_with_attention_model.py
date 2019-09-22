@@ -17,15 +17,9 @@ from torch.autograd import Variable
 
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+using_GPU = torch.cuda.is_available()
 
-print("PyTorch version:")
-print(torch.__version__)
-print("GPU Detected:")
-print(torch.cuda.is_available())
-using_GPU = False
-if torch.cuda.is_available():
-    using_GPU = True
-
+print("GPU Detected: %s" %(using_GPU))
 
 SOS_token = 0
 vocab = set()
@@ -151,6 +145,8 @@ class EncoderRNN(nn.Module):
 
         # TODO: Replace the embeddings with pre-trained word embeddings such as word2vec or GloVe
         #self.embedding = nn.Embedding(input_size, hidden_size)
+
+
         self.lstm = nn.LSTM(hidden_size, hidden_size)
 
     def forward(self, input, hidden):
@@ -344,6 +340,7 @@ def trainIters(encoder, decoder, word_to_ix, pairs, n_epochs, max_length, print_
     for epoch in range(n_epochs):
         for iter in range(1, len(training_pairs) + 1):
             training_pair = training_pairs[iter - 1]
+
             input_tensor = Variable(training_pair[0])
             target_tensor = Variable(training_pair[1])
             if using_GPU:
@@ -433,12 +430,12 @@ n_epochs = 15
 encoder = EncoderRNN(hidden_size).to(device)
 if using_GPU:
     encoder.cuda()
-
 output_feature_size = len(ix_to_label)  # 2 : we have two classes - literal/metaphor
 
 attn_decoder = AttnDecoderRNN(hidden_size, output_feature_size, max_length, dropout_p=0.1).to(device)
 if using_GPU:
     attn_decoder.cuda()
+trainIters(encoder, attn_decoder, word_to_ix, embedded_train, n_epochs, max_length, print_every=5000)
 
 evaluate(embedded_test, encoder, attn_decoder, max_length)
 
