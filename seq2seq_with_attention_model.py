@@ -325,7 +325,7 @@ def train(input_tensor, target_tensor, encoder, decoder, encoder_optimizer, deco
     return loss.item() / target_length
 
 
-def trainIters(encoder, decoder, word_to_ix, pairs, n_epochs, max_length, print_every=1000, plot_every=100, learning_rate=0.01):
+def trainIters(encoder, decoder, word_to_ix, pairs, n_epochs, max_length, print_every=1000, plot_every=100, learning_rate=0.02):
     start = time.time()
     print_loss_total = 0
 
@@ -350,7 +350,7 @@ def trainIters(encoder, decoder, word_to_ix, pairs, n_epochs, max_length, print_
                 print_loss_total = 0
                 print('%s (%d %d%%) %.4f' % (timeSince(start, iter / len(training_pairs)),
                                              iter, iter / len(training_pairs) * 100, print_loss_avg))
-
+            print("Finished Epoch Number : %s" % (str(epoch)))
     print("finished training")
 
 
@@ -372,6 +372,8 @@ def evaluate(test_sentences, encoder, attn_decoder, max_length):
     precision = tp / (tp + fp)
     recall = tp / (tp + fn)
     f1 = 2 * (precision * recall) / (precision + recall)
+
+    print("Accuracy: %s \n Precision: %s \n Recall: %s \n F1-Score: %s" %(str(accuracy),str(precision),str(recall),str(f1)))
 
 def predictSentenceLabels(sentence, encoder, decoder, max_length):
     with torch.no_grad():
@@ -417,15 +419,15 @@ embedded_test = [(embed_indexed_sequence(sen[0], word_to_ix, glove_embeddings),s
 max_length = max(max_train_sentence_len, max_test_sentence_len)
 hidden_size = 300
 vocab_size = len(word_to_ix)
-n_epochs = 1
+n_epochs = 15
 encoder = EncoderRNN(hidden_size).to(device)
 
 output_feature_size = len(ix_to_label)  # 2 : we have two classes - literal/metaphor
 
 attn_decoder = AttnDecoderRNN(hidden_size, output_feature_size, max_length, dropout_p=0.1).to(device)
 
-trainIters(encoder, attn_decoder, word_to_ix, embedded_train[1:50], n_epochs, max_length, print_every=5000)
+trainIters(encoder, attn_decoder, word_to_ix, embedded_train, n_epochs, max_length, print_every=5000)
 
-evaluate(embedded_test[0:5], encoder, attn_decoder, max_length)
+evaluate(embedded_test, encoder, attn_decoder, max_length)
 
 #http://nlp.stanford.edu/data/glove.840B.300d.zip
