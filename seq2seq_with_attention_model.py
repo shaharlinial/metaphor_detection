@@ -146,7 +146,6 @@ class EncoderRNN(nn.Module):
         # TODO: Replace the embeddings with pre-trained word embeddings such as word2vec or GloVe
         #self.embedding = nn.Embedding(input_size, hidden_size)
 
-
         self.lstm = nn.LSTM(hidden_size, hidden_size)
 
     def forward(self, input, hidden):
@@ -164,7 +163,6 @@ class EncoderRNN(nn.Module):
 # maximum sentence length (input length, for encoder outputs) that it can apply to.
 # Sentences of the maximum length will use all the attention weights,
 # while shorter sentences will only use the first few.
-
 class AttnDecoderRNN(nn.Module):
     def __init__(self, hidden_size, output_size, max_length, dropout_p=0.1):
         super(AttnDecoderRNN, self).__init__()
