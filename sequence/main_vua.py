@@ -83,8 +83,8 @@ word2idx, idx2word = get_word2idx_idx2word(vocab)
 # glove_embeddings a nn.Embeddings
 glove_embeddings = get_embedding_matrix(word2idx, idx2word, normalization=False)
 # elmo_embeddings
-elmos_train_vua = h5py.File('../elmo/VUA_train.hdf5', 'r')
-elmos_val_vua = h5py.File('../elmo/VUA_val.hdf5', 'r')
+#elmos_train_vua = h5py.File('../elmo/VUA_train.hdf5', 'r')
+#elmos_val_vua = h5py.File('../elmo/VUA_val.hdf5', 'r')
 # no suffix embeddings for sequence labeling
 suffix_embeddings = None
 
@@ -95,11 +95,11 @@ embed the datasets
 # raw_train_vua: sentence, label_seq, pos_seq
 # embedded_train_vua: embedded_sentence, pos, labels
 embedded_train_vua = [[embed_indexed_sequence(example[0], example[2], word2idx,
-                                      glove_embeddings, elmos_train_vua, suffix_embeddings),
+                                      glove_embeddings, None , suffix_embeddings),
                        example[2], example[1]]
                       for example in raw_train_vua]
 embedded_val_vua = [[embed_indexed_sequence(example[0], example[2], word2idx,
-                                    glove_embeddings, elmos_val_vua, suffix_embeddings),
+                                    glove_embeddings, None, suffix_embeddings),
                      example[2], example[1]]
                     for example in raw_val_vua]
 
