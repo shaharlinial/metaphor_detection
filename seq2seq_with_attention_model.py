@@ -350,7 +350,7 @@ def trainIters(encoder, decoder, word_to_ix, pairs, n_epochs, max_length, print_
                 print_loss_total = 0
                 print('%s (%d %d%%) %.4f' % (timeSince(start, iter / len(training_pairs)),
                                              iter, iter / len(training_pairs) * 100, print_loss_avg))
-            print("Finished Epoch Number : %s" % (str(epoch)))
+        print("Finished Epoch Number : %s" % (str(epoch)))
     print("finished training")
 
 
