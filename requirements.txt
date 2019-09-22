@@ -9,3 +9,5 @@ allennlp==0.3.0
 
 # Plotting performance
 matplotlib
+sklearn
+torch
