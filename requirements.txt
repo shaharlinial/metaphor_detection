@@ -4,9 +4,6 @@ tqdm
 # Efficient numerical operations
 numpy
 
-# Load ELMo vectors
-h5py
-
 # Use some tools for batching in util.py
 allennlp==0.3.0
 
