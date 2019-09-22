@@ -285,11 +285,11 @@ print('number of examples(sentences) for test_set ', len(raw_test_vua))
 for i in range(len(raw_test_vua)):
     raw_test_vua[i][2] = index_sequence(pos2idx, raw_test_vua[i][2])
 
-elmos_test_vua = h5py.File('../elmo/VUA_test.hdf5', 'r')
+#elmos_test_vua = h5py.File('../elmo/VUA_test.hdf5', 'r')
 # raw_train_vua: sentence, label_seq, pos_seq
 # embedded_train_vua: embedded_sentence, pos, labels
 embedded_test_vua = [[embed_indexed_sequence(example[0], example[2], word2idx,
-                                      glove_embeddings, elmos_test_vua, suffix_embeddings),
+                                      glove_embeddings, None, suffix_embeddings),
                        example[2], example[1]]
                       for example in raw_test_vua]
 
