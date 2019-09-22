@@ -31,7 +31,6 @@ class LSTMSequence(nn.Module):
         self.dropout_on_input_to_linear_layer = nn.Dropout(dropout3)
 
 
-
     # forward takes an batch of inputs and a list of ints
     # List of int with the unpadded length of each example in the batch.
     # input is of shape (batch_size, sequence_length)

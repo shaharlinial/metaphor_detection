@@ -10,7 +10,6 @@ def load_data_set(name, vocabulary_mode=1):
     # vocabulary mode:
     #   1 : train only
     #   2 : train and validation
-
     raw_val = []
     raw_train = []
     raw_test = []
@@ -24,7 +23,6 @@ def load_data_set(name, vocabulary_mode=1):
     sentence_index = 2
     label_index = 3
 
-    # todo: add more datasets
     if name == "vua":
         train_path = "../datasets/VUAsequence/VUA_seq_formatted_train.csv"
         validation_path = "../datasets/VUAsequence/VUA_seq_formatted_val.csv"

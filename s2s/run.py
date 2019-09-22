@@ -150,13 +150,13 @@ if __name__ == "__main__":
                     else:
                         fp += 1
 
-        accuracy = (tp + tn)/(tn+fp+fn+tp)
-        precision = tp / (tp+fp)
-        recall = tp / (tp+fn)
-        f1 = (2 * precision * recall) / (precision +recall)
-        print("Results: \n")
-        print("Accuracy: %s \n" %str(100*accuracy))
-        print("Precision: %s \n" % str(100*precision))
-        print("Recall: %s \n" % str(100*recall))
-        print("F1-Score: %s \n" % str(100*f1))
+    accuracy = (tp + tn)/(tn+fp+fn+tp)
+    precision = tp / (tp+fp)
+    recall = tp / (tp+fn)
+    f1 = (2 * precision * recall) / (precision +recall)
+    print("Results: \n")
+    print("Accuracy: %s \n" %str(100*accuracy))
+    print("Precision: %s \n" % str(100*precision))
+    print("Recall: %s \n" % str(100*recall))
+    print("F1-Score: %s \n" % str(100*f1))
 
